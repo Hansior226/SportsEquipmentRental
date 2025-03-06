@@ -1,0 +1,27 @@
+﻿@model IEnumerable<dynamic>
+
+<h2>Rental Plans</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Rental ID</th>
+            <th>Rental Date</th>
+            <th>Return Date</th>
+            <th>Equipment</th>
+            <th>Customer</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.RentalId</td>
+                <td>@item.RentalDate.ToShortDateString()</td>
+                <td>@(item.ReturnDate?.ToShortDateString() ?? "Not returned")</td>
+                <td>@item.EquipmentName</td>
+                <td>@item.CustomerName</td>
+            </tr>
+        }
+    </tbody>
+</table>

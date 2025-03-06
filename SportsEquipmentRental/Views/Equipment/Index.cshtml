@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Equipment>
+
+<h2>Equipment List</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Material</th>
+            <th>Type</th>
+            <th>Availability</th>
+            <th>Cost</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Material</td>
+                <td>@item.Type</td>
+                <td>@(item.Availability ? "Available" : "Unavailable")</td>
+                <td>@item.Cost</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,12 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
-namespace RentEquipment.Controllers
+public class EquipmentController : Controller
 {
-    public class SprzetController : Controller
+    private readonly AppDbContext _context;
+
+    public EquipmentController(AppDbContext context)
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        _context = context;
+    }
+
+    public IActionResult Index()
+    {
+        var equipmentList = _context.Equipment.ToList();
+        return View(equipmentList);
     }
 }
