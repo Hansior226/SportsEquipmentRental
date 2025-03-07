@@ -10,5 +10,3 @@ The project is built with ASP.NET Core MVC, using Entity Framework Core and SQL 
 ## Getting Started
 
 ---
-
-### Working program:
