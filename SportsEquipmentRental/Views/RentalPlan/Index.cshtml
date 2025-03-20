@@ -1,26 +1,30 @@
-﻿@model IEnumerable<dynamic>
+﻿@model IEnumerable<RentalPlan>
 
-<h2>Rental Plans</h2>
+<h2>Rental Plan List</h2>
+<a asp-action="Create" class="btn btn-primary">Create Rental Plan</a>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Rental ID</th>
+            <th>Customer</th>
+            <th>Equipment</th>
             <th>Rental Date</th>
             <th>Return Date</th>
-            <th>Equipment</th>
-            <th>Customer</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.RentalId</td>
+                <td>@item.Customer.FirstName @item.Customer.LastName</td>
+                <td>@item.Equipment.Name</td>
                 <td>@item.RentalDate.ToShortDateString()</td>
-                <td>@(item.ReturnDate?.ToShortDateString() ?? "Not returned")</td>
-                <td>@item.EquipmentName</td>
-                <td>@item.CustomerName</td>
+                <td>@(item.ReturnDate?.ToShortDateString() ?? "Not Returned")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.RentalId" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.RentalId" class="btn btn-danger">Delete</a>
+                </td>
             </tr>
         }
     </tbody>

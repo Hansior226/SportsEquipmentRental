@@ -1,0 +1,25 @@
+﻿@model RentalPlan
+
+<h2>Edit Rental Plan</h2>
+
+<form asp-action="Edit">
+    <input type="hidden" asp-for="RentalId" />
+
+    <div class="form-group">
+        <label asp-for="CustomerId">Customer</label>
+        <select asp-for="CustomerId" asp-items="ViewBag.Customers" class="form-control"></select>
+    </div>
+    <div class="form-group">
+        <label asp-for="EquipmentId">Equipment</label>
+        <select asp-for="EquipmentId" asp-items="ViewBag.Equipments" class="form-control"></select>
+    </div>
+    <div class="form-group">
+        <label asp-for="RentalDate"></label>
+        <input asp-for="RentalDate" type="date" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label asp-for="ReturnDate"></label>
+        <input asp-for="ReturnDate" type="date" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-warning">Save Changes</button>
+</form>

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace SportsEquipmentRental
+namespace SportsEquipmentRental.Data
 {
     public class Program
     {
@@ -12,6 +12,10 @@ namespace SportsEquipmentRental
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
+            builder.Services.AddScoped<IRentalPlanRepository, RentalPlanRepository>();
 
             var app = builder.Build();
 

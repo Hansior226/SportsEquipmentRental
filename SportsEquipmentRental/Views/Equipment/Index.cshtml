@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Equipment>
 
 <h2>Equipment List</h2>
+<a asp-action="Create" class="btn btn-primary">Add New Equipment</a>
 
 <table class="table">
     <thead>
@@ -10,6 +11,7 @@
             <th>Type</th>
             <th>Availability</th>
             <th>Cost</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -19,8 +21,12 @@
                 <td>@item.Name</td>
                 <td>@item.Material</td>
                 <td>@item.Type</td>
-                <td>@(item.Availability ? "Available" : "Unavailable")</td>
+                <td>@(item.Availability ? "Available" : "Not Available")</td>
                 <td>@item.Cost</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.EquipmentId" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.EquipmentId" class="btn btn-danger">Delete</a>
+                </td>
             </tr>
         }
     </tbody>
