@@ -13,6 +13,8 @@ namespace SportsEquipmentRental.Data
 
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
+
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
             builder.Services.AddScoped<IRentalPlanRepository, RentalPlanRepository>();

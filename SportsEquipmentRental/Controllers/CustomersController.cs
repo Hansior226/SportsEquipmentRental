@@ -1,44 +1,44 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Linq;
+using System.Threading.Tasks;
 
-    public class CustomersController : Controller
+public class CustomersController : Controller
+{
+    private readonly CustomerService _customerService;
+
+    public CustomersController(CustomerService customerService)
     {
-        private readonly ICustomerRepository _customerRepository;
+        _customerService = customerService;
+    }
 
-        public CustomersController(ICustomerRepository customerRepository)
-        {
-            _customerRepository = customerRepository;
-        }
+    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10)
+    {
+        var customers = await _customerService.GetAllCustomersAsync(pageNumber, pageSize);
+        return View(customers);
+    }
 
-        public async Task<IActionResult> Index()
-        {
-            var customers = await _customerRepository.GetAllAsync();
-            return View(customers);
-        }
+    public IActionResult Create()
+    {
+        return View();
+    }
 
-        public IActionResult Create()
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,Phone")] Customer customer)
+    {
+        if (ModelState.IsValid)
         {
-            return View();
+            await _customerService.AddCustomerAsync(customer);
+            return RedirectToAction(nameof(Index));
         }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,Phone")] Customer customer)
-        {
-            if (ModelState.IsValid)
-            {
-                await _customerRepository.AddAsync(customer);
-                return RedirectToAction(nameof(Index));
-            }   
-            return View(customer);
-        }
+        return View(customer);
+    }
 
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
             return NotFound();
 
-        var customer = await _customerRepository.GetByIdAsync(id.Value);
+        var customer = await _customerService.GetCustomerByIdAsync(id.Value);
         if (customer == null)
             return NotFound();
 
@@ -54,28 +54,29 @@ using System.Linq;
 
         if (ModelState.IsValid)
         {
-            await _customerRepository.UpdateAsync(customer);
+            await _customerService.UpdateCustomerAsync(customer);
         }
         return RedirectToAction(nameof(Index));
     }
 
     public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-                return NotFound();
+    {
+        if (id == null)
+            return NotFound();
 
-            var customer = await _customerRepository.GetByIdAsync(id.Value);
-            if (customer == null)
-                return NotFound();
+        var customer = await _customerService.GetCustomerByIdAsync(id.Value);
+        if (customer == null)
+            return NotFound();
 
-            return View(customer);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            await _customerRepository.DeleteAsync(id);
-            return RedirectToAction(nameof(Index));
-        }
+        return View(customer);
     }
+
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        await _customerService.DeleteCustomerAsync(id);
+        return RedirectToAction(nameof(Index));
+    }
+}
+

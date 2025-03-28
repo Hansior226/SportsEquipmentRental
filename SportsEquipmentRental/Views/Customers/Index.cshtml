@@ -1,31 +1,36 @@
-﻿@model IEnumerable<Customer>
+﻿@model IQueryable<Customer>
 
-<h2>Customers List</h2>
-
-
-<a asp-action="Create" class="btn btn-success">Add New Customer</a>
+<h2>Lista Klientów</h2>
 
 <table class="table">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.FirstName)</th>
-            <th>@Html.DisplayNameFor(model => model.LastName)</th>
-            <th>@Html.DisplayNameFor(model => model.Email)</th>
-            <th>Actions</th>
+            <th>Imię</th>
+            <th>Nazwisko</th>
+            <th>Email</th>
+            <th>Telefon</th>
+            <th>Akcje</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var customer in Model)
         {
             <tr>
-                <td>@item.FirstName</td>
-                <td>@item.LastName</td>
-                <td>@item.Email</td>
+                <td>@customer.FirstName</td>
+                <td>@customer.LastName</td>
+                <td>@customer.Email</td>
+                <td>@customer.Phone</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.CustomerID" class="btn btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@item.CustomerID" class="btn btn-danger">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@customer.CustomerID" class="btn btn-warning">Edytuj</a>
+                    <a asp-action="Delete" asp-route-id="@customer.CustomerID" class="btn btn-danger">Usuń</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<div>
+    <a asp-action="Index" asp-route-pageNumber="@(ViewBag.PageNumber - 1)" class="btn btn-primary @(ViewBag.PageNumber == 1 ? "disabled" : "")">Poprzednia</a>
+    <a asp-action="Index" asp-route-pageNumber="@(ViewBag.PageNumber + 1)" class="btn btn-primary">Następna</a>
+</div>
+
