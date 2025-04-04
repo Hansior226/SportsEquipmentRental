@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 
 public class CustomersController : Controller
 {
-    private readonly CustomerService _customerService;
+    private readonly ICustomerService _customerService;
 
-    public CustomersController(CustomerService customerService)
+    public CustomersController(ICustomerService customerService)
     {
         _customerService = customerService;
     }
@@ -23,7 +23,7 @@ public class CustomersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,Phone")] Customer customer)
+    public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,Phone")] CustomerViewModel customer)
     {
         if (ModelState.IsValid)
         {
@@ -47,7 +47,7 @@ public class CustomersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("CustomerID,FirstName,LastName,Email,Phone")] Customer customer)
+    public async Task<IActionResult> Edit(int id, [Bind("CustomerID,FirstName,LastName,Email,Phone")] CustomerViewModel customer)
     {
         if (id != customer.CustomerID)
             return NotFound();
@@ -55,8 +55,9 @@ public class CustomersController : Controller
         if (ModelState.IsValid)
         {
             await _customerService.UpdateCustomerAsync(customer);
+            return RedirectToAction(nameof(Index));
         }
-        return RedirectToAction(nameof(Index));
+        return View(customer);
     }
 
     public async Task<IActionResult> Delete(int? id)
@@ -79,4 +80,3 @@ public class CustomersController : Controller
         return RedirectToAction(nameof(Index));
     }
 }
-
