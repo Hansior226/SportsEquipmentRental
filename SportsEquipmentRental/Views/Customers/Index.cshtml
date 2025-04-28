@@ -1,8 +1,16 @@
 ﻿@model List<CustomerViewModel>
 
-<h2>Lista klientów</h2>
+@{
+    ViewData["Title"] = "Lista Klientów";
+}
 
-<table class="table">
+<h2>Lista Klientów</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Dodaj klienta</a>
+</p>
+
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Imię</th>
@@ -13,20 +21,18 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var customer in Model)
+        @foreach (var item in Model)
         {
             <tr>
-                <td>@customer.FirstName</td>
-                <td>@customer.LastName</td>
-                <td>@customer.Email</td>
-                <td>@customer.Phone</td>
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+                <td>@item.Email</td>
+                <td>@item.Phone</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@customer.CustomerID">Edytuj</a> |
-                    <a asp-action="Delete" asp-route-id="@customer.CustomerID">Usuń</a>
+                    <a asp-action="Edit" asp-route-id="@item.CustomerID" class="btn btn-warning btn-sm">Edytuj</a>
+                    <a asp-action="Delete" asp-route-id="@item.CustomerID" class="btn btn-danger btn-sm">Usuń</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-
-<a asp-action="Create" class="btn btn-success">Dodaj klienta</a>

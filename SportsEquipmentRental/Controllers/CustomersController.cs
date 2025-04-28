@@ -10,9 +10,15 @@ public class CustomersController : Controller
         _customerService = customerService;
     }
 
-    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> Index(int pageNumber = 1)
     {
+        const int pageSize = 5;
         var customers = await _customerService.GetAllCustomersAsync(pageNumber, pageSize);
+
+        ViewBag.CurrentPage = pageNumber;
+        ViewBag.PageSize = pageSize;
+        ViewBag.HasNextPage = customers.Count == pageSize;
+
         return View(customers);
     }
 
@@ -25,23 +31,22 @@ public class CustomersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,Phone")] CustomerViewModel customer)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            await _customerService.AddCustomerAsync(customer);
-            return RedirectToAction(nameof(Index));
+            return View(customer);
         }
-        return View(customer);
+
+        await _customerService.AddCustomerAsync(customer);
+        return RedirectToAction(nameof(Index));
     }
 
-    public async Task<IActionResult> Edit(int? id)
+    public async Task<IActionResult> Edit(int id)
     {
-        if (id == null)
-            return NotFound();
-
-        var customer = await _customerService.GetCustomerByIdAsync(id.Value);
+        var customer = await _customerService.GetCustomerByIdAsync(id);
         if (customer == null)
+        {
             return NotFound();
-
+        }
         return View(customer);
     }
 
@@ -50,14 +55,17 @@ public class CustomersController : Controller
     public async Task<IActionResult> Edit(int id, [Bind("CustomerID,FirstName,LastName,Email,Phone")] CustomerViewModel customer)
     {
         if (id != customer.CustomerID)
-            return NotFound();
-
-        if (ModelState.IsValid)
         {
-            await _customerService.UpdateCustomerAsync(customer);
-            return RedirectToAction(nameof(Index));
+            return NotFound();
         }
-        return View(customer);
+
+        if (!ModelState.IsValid)
+        {
+            return View(customer);
+        }
+
+        await _customerService.UpdateCustomerAsync(customer);
+        return RedirectToAction(nameof(Index));
     }
 
     public async Task<IActionResult> Delete(int? id)
