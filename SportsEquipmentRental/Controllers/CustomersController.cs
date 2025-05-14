@@ -1,25 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-public class CustomersController : Controller
+public class CustomerController : Controller
 {
-    private readonly ICustomerService _customerService;
+    private readonly ICustomerRepository _customerRepository;
+    private readonly IMapper _mapper;
 
-    public CustomersController(ICustomerService customerService)
+    public CustomerController(ICustomerRepository customerRepository, IMapper mapper)
     {
-        _customerService = customerService;
+        _customerRepository = customerRepository;
+        _mapper = mapper;
     }
 
-    public async Task<IActionResult> Index(int pageNumber = 1)
+    public async Task<CustomerViewModel> GetCustomerByIdAsync(int id)
     {
-        const int pageSize = 5;
-        var customers = await _customerService.GetAllCustomersAsync(pageNumber, pageSize);
+        var customer = await _customerRepository.GetByIdAsync(id);
+        return customer == null ? null : _mapper.Map<CustomerViewModel>(customer);
+    }
 
-        ViewBag.CurrentPage = pageNumber;
-        ViewBag.PageSize = pageSize;
-        ViewBag.HasNextPage = customers.Count == pageSize;
-
-        return View(customers);
+    public async Task<List<CustomerViewModel>> GetAllCustomersAsync(int pageNumber, int pageSize)
+    {
+        var customers = await _customerRepository.GetAllAsync();
+        var pagedCustomers = customers
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+        return _mapper.Map<List<CustomerViewModel>>(pagedCustomers);
     }
 
     public IActionResult Create()

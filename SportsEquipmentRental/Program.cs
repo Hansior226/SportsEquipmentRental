@@ -1,7 +1,9 @@
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using System;
+using Microsoft.AspNetCore.Identity;
 
-namespace SportsEquipmentRental.Data
+namespace SportsEquipmentRental
 {
     public class Program
     {
@@ -9,14 +11,17 @@ namespace SportsEquipmentRental.Data
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
             builder.Services.AddControllersWithViews()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CustomerValidator>());
 
-            builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<AppDbContext>();
+
+            builder.Services.AddAutoMapper(typeof(CustomerProfile));
+
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
             builder.Services.AddScoped<IRentalPlanRepository, RentalPlanRepository>();

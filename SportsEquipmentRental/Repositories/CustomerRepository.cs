@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 public class CustomerRepository : ICustomerRepository
@@ -11,9 +11,9 @@ public class CustomerRepository : ICustomerRepository
         _context = context;
     }
 
-    public IQueryable<Customer> GetAllAsync()
+    public async Task<List<Customer>> GetAllAsync()
     {
-        return _context.Customers.AsQueryable(); // Zwracamy IQueryable
+        return await _context.Customers.ToListAsync();
     }
 
     public async Task<Customer> GetByIdAsync(int id)
@@ -23,7 +23,7 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task AddAsync(Customer customer)
     {
-        await _context.Customers.AddAsync(customer);
+        _context.Customers.Add(customer);
         await _context.SaveChangesAsync();
     }
 
@@ -35,7 +35,7 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task DeleteAsync(int id)
     {
-        var customer = await _context.Customers.FindAsync(id);
+        var customer = await GetByIdAsync(id);
         if (customer != null)
         {
             _context.Customers.Remove(customer);

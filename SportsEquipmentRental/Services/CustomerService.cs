@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,70 +6,42 @@ using System.Threading.Tasks;
 public class CustomerService : ICustomerService
 {
     private readonly ICustomerRepository _customerRepository;
+    private readonly IMapper _mapper;
 
-    public CustomerService(ICustomerRepository customerRepository)
+    public CustomerService(ICustomerRepository customerRepository, IMapper mapper)
     {
         _customerRepository = customerRepository;
-    }
-
-    public async Task<List<CustomerViewModel>> GetAllCustomersAsync(int pageNumber, int pageSize)
-    {
-        var customers = await _customerRepository
-            .GetAllAsync()
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        return customers.Select(c => new CustomerViewModel
-        {
-            CustomerID = c.CustomerID,
-            FirstName = c.FirstName,
-            LastName = c.LastName,
-            Email = c.Email,
-            Phone = c.Phone
-        }).ToList();
+        _mapper = mapper;
     }
 
     public async Task<CustomerViewModel> GetCustomerByIdAsync(int id)
     {
         var customer = await _customerRepository.GetByIdAsync(id);
-        if (customer == null)
-            return null;
-
-        return new CustomerViewModel
-        {
-            CustomerID = customer.CustomerID,
-            FirstName = customer.FirstName,
-            LastName = customer.LastName,
-            Email = customer.Email,
-            Phone = customer.Phone
-        };
+        return customer == null ? null : _mapper.Map<CustomerViewModel>(customer);
     }
 
-    public async Task AddCustomerAsync(CustomerViewModel customerViewModel)
+    public async Task<List<CustomerViewModel>> GetAllCustomersAsync(int pageNumber, int pageSize)
     {
-        var customer = new Customer
-        {
-            FirstName = customerViewModel.FirstName,
-            LastName = customerViewModel.LastName,
-            Email = customerViewModel.Email,
-            Phone = customerViewModel.Phone
-        };
+        var customers = await _customerRepository.GetAllAsync();
+        var pagedCustomers = customers
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+        return _mapper.Map<List<CustomerViewModel>>(pagedCustomers);
+    }
 
+    public async Task AddCustomerAsync(CustomerViewModel model)
+    {
+        var customer = _mapper.Map<Customer>(model);
         await _customerRepository.AddAsync(customer);
     }
 
-    public async Task UpdateCustomerAsync(CustomerViewModel customerViewModel)
+    public async Task UpdateCustomerAsync(CustomerViewModel model)
     {
-        var customer = await _customerRepository.GetByIdAsync(customerViewModel.CustomerID);
-        if (customer == null)
-            return;
+        var customer = await _customerRepository.GetByIdAsync(model.CustomerID);
+        if (customer == null) return;
 
-        customer.FirstName = customerViewModel.FirstName;
-        customer.LastName = customerViewModel.LastName;
-        customer.Email = customerViewModel.Email;
-        customer.Phone = customerViewModel.Phone;
-
+        _mapper.Map(model, customer);
         await _customerRepository.UpdateAsync(customer);
     }
 

@@ -6,6 +6,9 @@ namespace SportsEquipmentRental.Controllers
 {
     public class HomeController : Controller
     {
+        [AllowAnonymous]
+        public IActionResult Index() => View();
+
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)

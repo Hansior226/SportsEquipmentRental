@@ -21,6 +21,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
         [Phone]
         public string Phone { get; set; }
-
-        public ICollection<RentalPlan>? Rentals { get; set; }
-    }
+                
+        [Required]
+        public string ApplicationUser { get; set; }
+        public ICollection<RentalPlan>? Rentals { get; set; } = new List<RentalPlan>();
+}
