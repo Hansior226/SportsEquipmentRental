@@ -1,0 +1,36 @@
+﻿@model IEnumerable<ApplicationUser>
+
+<h2>Użytkownicy</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Akcja</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>
+                    @string.Join(", ", await Context.RequestServices
+                .GetRequiredService<UserManager<ApplicationUser>>().GetRolesAsync(user))
+                </td>
+                <td>
+                    <form method="post" asp-action="AssignRole">
+                        <input type="hidden" name="userId" value="@user.Id" />
+                        <select name="role">
+                            <option>Admin</option>
+                            <option>User</option>
+                            <option>Moderator</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary">Nadaj rolę</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
